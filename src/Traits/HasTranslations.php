@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\App;
 
 trait HasTranslations
 {
-    // Define the property for translatable fields
-    public array $translatable = [];
-
     /**
      * Get the model's translations.
      */
