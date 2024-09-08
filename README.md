@@ -13,7 +13,7 @@ A Laravel package to add translation capabilities to any Eloquent model by stori
 1. Install the package via Composer:
 
 ```bash
-composer require wncms/laravel-translatable
+composer require secretwebmaster/wncms-translatable
 ```
 
 2. Publish the migration file:
