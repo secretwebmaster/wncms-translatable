@@ -21,12 +21,18 @@
     "require": {
         "php": "^8.0",
         "illuminate/database": "^9.0|^10.0|^11.0",
-        "illuminate/support": "^9.0|^10.0|^11.0"
+        "illuminate/support": "^9.0|^10.0|^11.0",
+        "secretwebmaster/wncms-translatable": "dev-master"
     },
     "autoload": {
         "psr-4": {
             "Wncms\\Translatable\\": "src/"
         }
+    },
+    "extra":{
+        "laravel": [
+          "src/Wncms/TranslatableServiceProvider"
+        ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true
