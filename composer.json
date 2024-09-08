@@ -27,5 +27,7 @@
         "psr-4": {
             "Wncms\\Translatable\\": "src/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
