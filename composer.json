@@ -30,7 +30,7 @@
     },
     "extra":{
         "laravel": [
-          "src/Wncms/TranslatableServiceProvider"
+          "Wncms\\TranslatableServiceProvider"
         ]
     },
     "minimum-stability": "dev",
