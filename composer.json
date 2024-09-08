@@ -21,8 +21,7 @@
     "require": {
         "php": "^8.0",
         "illuminate/database": "^9.0|^10.0|^11.0",
-        "illuminate/support": "^9.0|^10.0|^11.0",
-        "secretwebmaster/wncms-translatable": "dev-main"
+        "illuminate/support": "^9.0|^10.0|^11.0"
     },
     "autoload": {
         "psr-4": {
