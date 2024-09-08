@@ -12,17 +12,17 @@ A Laravel package to add translation capabilities to any Eloquent model by stori
 
 1. Install the package via Composer:
 
-```
+```bash
 composer require wncms/laravel-translatable
 ```
 
 2. Publish the migration file:
-```
+```bash
 php artisan vendor:publish --tag=translatable-migrations
 ```
 
 3. Run the migration to create the `translations` table:
-```
+```bash
 php artisan migrate
 ```
 
@@ -30,7 +30,7 @@ php artisan migrate
 
 1. Add the `HasTranslations` trait to your model
 To make any model translatable, simply add the `HasTranslations` trait to your Eloquent model and define the `$translatable` property with the list of fields that should be translatable.
-```
+```php
 <?php
 
 namespace App\Models;
@@ -52,7 +52,7 @@ class Post extends Model
 
 2. Setting Translations
 You can set translations for translatable fields by passing an array with locale keys:
-```
+```php
 $post = Post::find(1);
 
 // Set translations for 'title' and 'description'
@@ -63,13 +63,13 @@ $post->save();
 
 3. Getting Translations
 When retrieving translatable fields, the package automatically returns the value based on the current locale of the application:
-```
+```php
 // Get the 'title' based on the app's current locale
 echo $post->title; // Outputs 'Hello World' or 'Bonjour le monde' depending on the locale
 ```
 
 You can also retrieve translations for a specific locale:
-```
+```php
 // Get the 'title' in French
 echo $post->getTranslation('title', 'fr'); // Outputs 'Bonjour le monde'
 
@@ -79,7 +79,7 @@ echo $post->getTranslation('description', 'en'); // Outputs 'Description in Engl
 
 4. Setting Translations for a Specific Locale
 If you want to set a translation for a specific locale without using an array, you can use the `setTranslation` method:
-```
+```php
 $post->setTranslation('title', 'es', 'Hola Mundo');
 $post->save();
 ```
@@ -100,7 +100,7 @@ The package will create a `translations` table with the following structure:
 
 6. Custom Locale
 You can override the current locale by passing the desired locale to the `getTranslation` method:
-```
+```php
 $post->getTranslation('title', 'fr'); // Output: 'Bonjour le monde'
 ```
 
