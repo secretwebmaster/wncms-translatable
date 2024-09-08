@@ -28,10 +28,12 @@
             "Wncms\\Translatable\\": "src/"
         }
     },
-    "extra":{
-        "laravel": [
-          "Wncms\\TranslatableServiceProvider"
-        ]
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wncms\\Translatable\\TranslatableServiceProvider"
+            ]
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
