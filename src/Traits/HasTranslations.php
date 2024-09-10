@@ -2,11 +2,30 @@
 
 namespace Wncms\Translatable\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\App;
+use Illuminate\Database\Eloquent\Builder;
 
 trait HasTranslations
 {
+    /**
+     * Boot the trait and attach event listeners.
+     */
+    public static function bootHasTranslations()
+    {
+        static::addGlobalScope('translations', function (Builder $builder) {
+            $builder->with('translations');
+        });
+
+        static::saving(function (Model $model) {
+            if (!wncms()->isDefaultLocale() && $model->exists) {
+                $model->handleTranslationsBeforeSave();
+                return false; 
+            }
+        });
+    }
+
     /**
      * Get the model's translations.
      */
@@ -74,6 +93,18 @@ trait HasTranslations
             }
         } else {
             parent::__set($key, $value);
+        }
+    }
+
+    /**
+     * Handle translations before saving the model.
+     */
+    protected function handleTranslationsBeforeSave()
+    {
+        foreach ($this->translatable as $field) {
+            if (!is_null($this->getAttribute($field))) {
+                $this->setTranslation($field, App::getLocale(), $this->getAttribute($field));
+            }
         }
     }
 }
