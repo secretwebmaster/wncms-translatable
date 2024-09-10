@@ -51,14 +51,18 @@ class Post extends Model
 ```
 
 2. Setting Translations
-You can set translations for translatable fields by passing an array with locale keys:
+Create your model and call `setTranslation()`
 ```php
 $post = Post::find(1);
 
 // Set translations for 'title' and 'description'
-$post->title = ['en' => 'Hello World', 'fr' => 'Bonjour le monde'];
-$post->description = ['en' => 'Description in English', 'fr' => 'Description en Français'];
-$post->save();
+$psot = Post::create([
+    'title' => 'Hello World',
+    'description' => 'Description in English',
+]);
+
+$post->setTranslation('title', 'fr', 'Bonjour le monde');
+$post->setTranslation('description', 'fr', 'Description en Français');
 ```
 
 3. Getting Translations
@@ -77,14 +81,7 @@ echo $post->getTranslation('title', 'fr'); // Outputs 'Bonjour le monde'
 echo $post->getTranslation('description', 'en'); // Outputs 'Description in English'
 ```
 
-4. Setting Translations for a Specific Locale
-If you want to set a translation for a specific locale without using an array, you can use the `setTranslation` method:
-```php
-$post->setTranslation('title', 'es', 'Hola Mundo');
-$post->save();
-```
-
-5. Table Structure
+4. Table Structure
 The package will create a `translations` table with the following structure:
 
 | Field             | Type         | Description                                  |
@@ -97,15 +94,3 @@ The package will create a `translations` table with the following structure:
 | `value`           | text         | The translated value                         |
 | `created_at`      | timestamp    | Timestamp for when the translation was created|
 | `updated_at`      | timestamp    | Timestamp for when the translation was updated|
-
-6. Custom Locale
-You can override the current locale by passing the desired locale to the `getTranslation` method:
-```php
-$post->getTranslation('title', 'fr'); // Output: 'Bonjour le monde'
-```
-
-Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-License
-This package is open-sourced software licensed under the MIT license.
