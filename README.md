@@ -10,25 +10,24 @@ A Laravel package to add translation capabilities to any Eloquent model by stori
 
 ## Installation
 
-1. Install the package via Composer:
+### Step 1. Install the package via Composer:
 
 ```bash
 composer require secretwebmaster/wncms-translatable
 ```
 
-2. Publish the migration file:
+### Step 2. Publish the migration file:
 ```bash
 php artisan vendor:publish --tag=translatable-migrations
 ```
 
-3. Run the migration to create the `translations` table:
+### Step 3. Run the migration to create the `translations` table:
 ```bash
 php artisan migrate
 ```
 
-## Usage
-
-1. Add the `HasTranslations` trait to your model
+### Step 4. Setup your model
+Add the `HasTranslations` trait to your model
 To make any model translatable, simply add the `HasTranslations` trait to your Eloquent model and define the `$translatable` property with the list of fields that should be translatable.
 ```php
 <?php
@@ -50,7 +49,9 @@ class Post extends Model
 
 ```
 
-2. Setting Translations
+## Usage
+
+### Setting Translations
 Create your model and call `setTranslation()`
 ```php
 $post = Post::find(1);
@@ -65,7 +66,7 @@ $post->setTranslation('title', 'fr', 'Bonjour le monde');
 $post->setTranslation('description', 'fr', 'Description en Français');
 ```
 
-3. Getting Translations
+### Getting Translations
 When retrieving translatable fields, the package automatically returns the value based on the current locale of the application:
 ```php
 // Get the 'title' based on the app's current locale
@@ -81,7 +82,7 @@ echo $post->getTranslation('title', 'fr'); // Outputs 'Bonjour le monde'
 echo $post->getTranslation('description', 'en'); // Outputs 'Description in English'
 ```
 
-4. Table Structure
+### Table Structure
 The package will create a `translations` table with the following structure:
 
 | Field             | Type         | Description                                  |
