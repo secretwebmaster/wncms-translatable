@@ -57,7 +57,7 @@ Create your model and call `setTranslation()`
 $post = Post::find(1);
 
 // Set translations for 'title' and 'description'
-$psot = Post::create([
+$post = Post::create([
     'title' => 'Hello World',
     'description' => 'Description in English',
 ]);
