@@ -97,6 +97,14 @@ trait HasTranslations
     }
 
     /**
+     * get $translatable property if model has it
+     */
+    public function getTranslatable()
+    {
+        return $this->translatable;
+    }
+
+    /**
      * Handle translations before saving the model.
      */
     protected function handleTranslationsBeforeSave()
@@ -107,4 +115,8 @@ trait HasTranslations
             }
         }
     }
+
+
+
+    
 }
