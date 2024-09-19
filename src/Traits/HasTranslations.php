@@ -54,20 +54,15 @@ trait HasTranslations
      */
     public function setTranslation(string $field, string $locale, $value)
     {
-        $translation = $this->translations()
-            ->where('field', $field)
-            ->where('locale', $locale)
-            ->first();
-
-        if ($translation) {
-            $translation->update(['value' => $value]);
-        } else {
-            $this->translations()->create([
+        return $this->translations()->updateOrCreate(
+            [
                 'field'  => $field,
                 'locale' => $locale,
-                'value'  => $value,
-            ]);
-        }
+            ],
+            [
+                'value' => $value,
+            ]
+        );
     }
 
     /**
