@@ -82,6 +82,11 @@ echo $post->getTranslation('title', 'fr'); // Outputs 'Bonjour le monde'
 echo $post->getTranslation('description', 'en'); // Outputs 'Description in English'
 ```
 
+You can get available translation field of a model:
+```php
+$post->getTranslatable() // Outputs an array of translatable fields
+```
+
 ### Table Structure
 The package will create a `translations` table with the following structure:
 

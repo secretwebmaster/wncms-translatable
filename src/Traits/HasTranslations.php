@@ -46,7 +46,7 @@ trait HasTranslations
             ->where('locale', $locale)
             ->first();
 
-        return $translation ? $translation->value : $this->getOriginal($field);
+        return $translation ? $translation->value : $this->getAttribute($field);
     }
 
     /**
