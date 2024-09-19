@@ -83,20 +83,6 @@ trait HasTranslations
     }
 
     /**
-     * Override the __set magic method to set translations.
-     */
-    public function __set($key, $value)
-    {
-        if (is_array($value) && in_array($key, $this->translatable)) {
-            foreach ($value as $locale => $translation) {
-                $this->setTranslation($key, $locale, $translation);
-            }
-        } else {
-            parent::__set($key, $value);
-        }
-    }
-
-    /**
      * get $translatable property if model has it
      */
     public function getTranslatable()
