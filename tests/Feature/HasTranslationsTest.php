@@ -66,4 +66,32 @@ class HasTranslationsTest extends TestCase
         $retrievedPost = TestPost::first();
         $this->assertEquals('Título en Español', $retrievedPost->getTranslation('title', 'es'));
     }
+
+    #[Test]
+    public function it_loads_translations_with_eager_loading()
+    {
+        // Create a new post with a translation
+        $post = TestPost::create(['title' => 'Original Title']);
+        $post->setTranslation('title', 'es', 'Título en Español');
+
+        // Retrieve the post with translations
+        $retrievedPost = TestPost::with('translations')->first();
+        $this->assertEquals('Título en Español', $retrievedPost->getTranslation('title', 'es'));
+    }
+
+    #[Test]
+    public function it_can_skip_translations_for_default_locale()
+    {
+        // Set the default locale to Spanish
+        app()->setLocale('es');
+
+        // Create a new post with a translation
+        $post = TestPost::create(['title' => 'Título en Español']);
+        $post->setTranslation('title', 'en', 'Title in English');
+
+        // Retrieve the post and assert that translations are loaded
+        $retrievedPost = TestPost::first();
+        $this->assertEquals('Título en Español', $retrievedPost->getTranslation('title', 'es'));
+        $this->assertEquals('Title in English', $retrievedPost->getTranslation('title', 'en'));
+    }
 }
