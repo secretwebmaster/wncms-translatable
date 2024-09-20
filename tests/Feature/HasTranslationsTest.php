@@ -9,6 +9,14 @@ use Wncms\Translatable\Tests\Models\TestPost;
 class HasTranslationsTest extends TestCase
 {
     #[Test]
+    public function it_loads_translatable_config()
+    {
+        // Access the configuration value
+        $create_tranlation_for_default_locale = config('translatable.create_tranlation_for_default_locale');
+        $this->assertTrue($create_tranlation_for_default_locale);
+    }
+
+    #[Test]
     public function it_can_save_and_retrieve_translations()
     {
         $post = TestPost::create([
