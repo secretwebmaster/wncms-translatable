@@ -32,10 +32,18 @@ trait HasTranslations
 
         static::saving(function (Model $model) {
             // Handle translations before saving the model
-            if (App::getLocale() !== config('app.locale') || config('translatable.create_translation_for_default_locale')) {
-                $model->handleTranslationsBeforeSave();
-                return false; // Prevent model save until translations are handled
+            if (App::getLocale() == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
+                return false;
             }
+            $model->handleTranslationsBeforeSave();
+        });
+
+        static::updating(function (Model $model) {
+            // Handle translations before updating the model
+            if (App::getLocale() == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
+                return false;
+            }
+            $model->handleTranslationsBeforeSave();
         });
     }
 
@@ -57,16 +65,20 @@ trait HasTranslations
      */
     public function getAttribute($key)
     {
-        if (array_key_exists($key, $this->attributes)) {
-            if (in_array($key, $this->translatable)) {
-                $value = $this->getTranslation($key);
-            } else {
-                $value = parent::getAttribute($key);
+        // Check if the key is translatable
+        if (in_array($key, $this->translatable)) {
+            // Check if current request is updating the model and the field is being updated
+            if (request()->isMethod('put') || request()->isMethod('patch')) {
+                if (request()->has($key)) {
+                    return request($key);
+                }
             }
-            return $value;
-        } else {
-            return parent::getAttribute($key);
+
+            return $this->getTranslation($key);
         }
+
+        // Default behavior for non-translatable attributes
+        return parent::getAttribute($key);
     }
 
     /**
@@ -118,6 +130,7 @@ trait HasTranslations
      */
     protected function handleTranslationsBeforeSave()
     {
+        // dd(request()->all());
         foreach ($this->translatable as $field) {
             if (!is_null($this->getAttribute($field))) {
                 $this->setTranslation($field, App::getLocale(), $this->getAttribute($field));
