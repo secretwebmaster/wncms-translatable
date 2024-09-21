@@ -77,13 +77,6 @@ trait HasTranslations
     {
         // Check if the key is translatable
         if (in_array($key, $this->translatable)) {
-            // Check if current request is updating the model and the field is being updated
-            if (request()->isMethod('put') || request()->isMethod('patch')) {
-                if (request()->has($key)) {
-                    return request($key);
-                }
-            }
-
             return $this->getTranslation($key);
         }
 
@@ -102,9 +95,49 @@ trait HasTranslations
     {
         $locale = $locale ?? App::getLocale();
         $translation = $this->translations()->where('field', $field)->where('locale', $locale)->first();
-        return $translation ? $translation->value : parent::getAttribute($field);
-    }
 
+        if ($translation) {
+            $value = $translation->value;
+
+            // Handle specific cast types
+            if ($this->hasCast($field, 'array') || $this->hasCast($field, 'json')) {
+                return json_decode($value, true);
+            }
+
+            if ($this->hasCast($field, 'datetime')) {
+                return \Illuminate\Support\Carbon::parse($value);
+            }
+
+            if ($this->hasCast($field, 'boolean')) {
+                return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            }
+
+            if ($this->hasCast($field, 'integer')) {
+                return (int) $value;
+            }
+
+            if ($this->hasCast($field, 'float') || $this->hasCast($field, 'double')) {
+                return (float) $value;
+            }
+
+            if ($this->hasCast($field, 'object')) {
+                return json_decode($value);
+            }
+
+            if ($this->hasCast($field, 'collection')) {
+                return collect(json_decode($value, true));
+            }
+
+            if ($this->hasCast($field, 'encrypted')) {
+                return decrypt($value);
+            } 
+
+            return $value; // Return the raw value if no special casting is needed
+        }
+
+        // If no translation found, return the parent's attribute
+        return parent::getAttribute($field);
+    }
     /**
      * Set or update the translation for a given field and locale.
      * 
@@ -115,6 +148,42 @@ trait HasTranslations
      */
     public function setTranslation(string $field, string $locale, $value)
     {
+        // Handle specific cast types
+        if ($this->hasCast($field, 'array') || $this->hasCast($field, 'json')) {
+            $value = json_encode($value);
+        }
+
+        if ($this->hasCast($field, 'datetime')) {
+            // If the value is not already a Carbon instance, convert it
+            if (!($value instanceof \Illuminate\Support\Carbon)) {
+                $value = \Illuminate\Support\Carbon::parse($value);
+            }
+        }
+
+        if ($this->hasCast($field, 'boolean')) {
+            $value = $value ? 1 : 0; // Convert boolean to integer
+        }
+
+        if ($this->hasCast($field, 'integer')) {
+            $value = (int) $value;
+        }
+
+        if ($this->hasCast($field, 'float') || $this->hasCast($field, 'double')) {
+            $value = (float) $value;
+        }
+
+        if ($this->hasCast($field, 'object')) {
+            $value = json_encode($value);
+        }
+
+        if ($this->hasCast($field, 'collection')) {
+            $value = json_encode($value->toArray());
+        }
+
+        if ($this->hasCast($field, 'encrypted')) {
+            $value = encrypt($value);
+        }
+
         return $this->translations()->updateOrCreate(
             ['field' => $field, 'locale' => $locale],
             ['value' => $value]
@@ -141,8 +210,8 @@ trait HasTranslations
     protected function handleTranslationsAfterSave()
     {
         foreach ($this->translatable as $field) {
-            if (!is_null($this->getAttribute($field))) {
-                $this->setTranslation($field, App::getLocale(), $this->getAttribute($field));
+            if (!is_null(request($field))) {
+                $this->setTranslation($field, App::getLocale(), parent::getAttribute($field));
             }
         }
     }
