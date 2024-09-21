@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
  * Trait HasTranslations
  * 
  * This trait adds functionality to make Eloquent models translatable. 
- * It allows storing translations for model fields in a separate table and 
+ * It allows storing translations fpor model fields in a separate table and 
  * provides methods to retrieve and set translations for specific locales.
  * 
  * @package Wncms\Translatable\Traits
@@ -32,7 +32,8 @@ trait HasTranslations
 
         static::saving(function (Model $model) {
             // Handle translations before saving the model
-            if (App::getLocale() == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
+            // if current locale is the default locale and the config is set to not create translation for default locale
+            if (config(config('translatable.default_locale_key', 'app.locale')) == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
                 return false;
             }
             $model->handleTranslationsBeforeSave();
@@ -40,7 +41,8 @@ trait HasTranslations
 
         static::updating(function (Model $model) {
             // Handle translations before updating the model
-            if (App::getLocale() == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
+            // if current locale is the default locale and the config is set to not create translation for default locale
+            if (config(config('translatable.default_locale_key', 'app.locale')) == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
                 return false;
             }
             $model->handleTranslationsBeforeSave();
@@ -130,7 +132,6 @@ trait HasTranslations
      */
     protected function handleTranslationsBeforeSave()
     {
-        // dd(request()->all());
         foreach ($this->translatable as $field) {
             if (!is_null($this->getAttribute($field))) {
                 $this->setTranslation($field, App::getLocale(), $this->getAttribute($field));
