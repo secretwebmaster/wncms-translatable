@@ -36,7 +36,11 @@ trait HasTranslations
             if (config(config('translatable.default_locale_key', 'app.locale')) == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
                 return false;
             }
-            $model->handleTranslationsBeforeSave();
+        });
+
+        static::saved(function (Model $model) {
+            // Handle translations after saving the model
+            $model->handleTranslationsAfterSave();
         });
 
         static::updating(function (Model $model) {
@@ -45,7 +49,11 @@ trait HasTranslations
             if (config(config('translatable.default_locale_key', 'app.locale')) == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
                 return false;
             }
-            $model->handleTranslationsBeforeSave();
+        });
+
+        static::updated(function (Model $model) {
+            // Handle translations after updating the model
+            $model->handleTranslationsAfterSave();
         });
     }
 
@@ -124,13 +132,13 @@ trait HasTranslations
     }
 
     /**
-     * Handle the translations before saving the model.
+     * Handle the translations after saving the model.
      * 
      * Saves the translation for each translatable field.
      * 
      * @return void
      */
-    protected function handleTranslationsBeforeSave()
+    protected function handleTranslationsAfterSave()
     {
         foreach ($this->translatable as $field) {
             if (!is_null($this->getAttribute($field))) {
