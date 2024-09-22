@@ -215,4 +215,17 @@ trait HasTranslations
             }
         }
     }
+    
+    public function toArray()
+    {
+        $attributes = parent::toArray();
+
+        foreach ($this->translatable as $field) {
+            if (array_key_exists($field, $attributes)) {
+                $attributes[$field] = $this->getTranslation($field);
+            }
+        }
+
+        return $attributes;
+    }
 }
