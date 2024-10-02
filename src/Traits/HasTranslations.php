@@ -55,6 +55,11 @@ trait HasTranslations
             // Handle translations after updating the model
             $model->handleTranslationsAfterSave();
         });
+
+        static::deleting(function (Model $model) {
+            // Delete translations related to the model
+            $model->translations()->delete();
+        });
     }
 
     /**
