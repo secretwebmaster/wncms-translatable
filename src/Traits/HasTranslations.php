@@ -99,7 +99,7 @@ trait HasTranslations
     public function getTranslation(string $field, ?string $locale = null)
     {
         $locale = $locale ?? App::getLocale();
-        $translation = $this->translations()->where('field', $field)->where('locale', $locale)->first();
+        $translation = $this->translations->where('field', $field)->where('locale', $locale)->first();
 
         if ($translation) {
             $value = $translation->value;
