@@ -216,7 +216,8 @@ trait HasTranslations
     {
         foreach ($this->translatable as $field) {
             if (!is_null(request($field))) {
-                $this->setTranslation($field, App::getLocale(), parent::getAttribute($field));
+                // $this->setTranslation($field, App::getLocale(), parent::getAttribute($field));
+                $this->setTranslation($field, App::getLocale(), request($field));
             }
         }
     }
