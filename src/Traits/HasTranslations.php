@@ -153,6 +153,10 @@ trait HasTranslations
      */
     public function setTranslation(string $field, string $locale, $value)
     {
+        if(empty($value)){
+            return false;
+        }
+        
         // Handle specific cast types
         if ($this->hasCast($field, 'array') || $this->hasCast($field, 'json')) {
             $value = json_encode($value);
