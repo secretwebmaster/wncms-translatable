@@ -135,13 +135,13 @@ trait HasTranslations
 
             if ($this->hasCast($field, 'encrypted')) {
                 return decrypt($value);
-            } 
+            }
 
             return $value; // Return the raw value if no special casting is needed
         }
 
-        // If no translation found, return the parent's attribute
-        return parent::getAttribute($field);
+        // If no translation found, return the raw attribute
+        return $this->getAttributes()[$field] ?? null;
     }
     /**
      * Set or update the translation for a given field and locale.
@@ -153,10 +153,10 @@ trait HasTranslations
      */
     public function setTranslation(string $field, string $locale, $value)
     {
-        if(empty($value)){
+        if (empty($value)) {
             return false;
         }
-        
+
         // Handle specific cast types
         if ($this->hasCast($field, 'array') || $this->hasCast($field, 'json')) {
             $value = json_encode($value);
@@ -219,13 +219,14 @@ trait HasTranslations
     protected function handleTranslationsAfterSave()
     {
         foreach ($this->translatable as $field) {
-            if (!is_null(request($field))) {
-                // $this->setTranslation($field, App::getLocale(), parent::getAttribute($field));
-                $this->setTranslation($field, App::getLocale(), request($field));
+            $value = parent::getAttribute($field);
+
+            if (!is_null($value)) {
+                $this->setTranslation($field, app()->getLocale(), $value);
             }
         }
     }
-    
+
     public function toArray()
     {
         $attributes = parent::toArray();
