@@ -20,7 +20,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "illuminate/database": "^9.0|^10.0|^11.0",
+        "illuminate/database": "^9.0|^10.0|^11.0|^12.0",
         "illuminate/support": "^9.0|^10.0|^11.0|^12.0"
     },
     "autoload": {
@@ -40,10 +40,10 @@
             ]
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "require-dev": {
-        "orchestra/testbench": "^9.4",
+        "orchestra/testbench": "^10.0",
         "nunomaduro/collision": "^8.4"
     }
 }
