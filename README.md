@@ -100,3 +100,8 @@ The package will create a `translations` table with the following structure:
 | `value`           | text         | The translated value                         |
 | `created_at`      | timestamp    | Timestamp for when the translation was created|
 | `updated_at`      | timestamp    | Timestamp for when the translation was updated|
+
+## Update log
+### v1.2.8 2025-08-20
+- fix typo in Feature test
+- add save_empty_translations option in config file

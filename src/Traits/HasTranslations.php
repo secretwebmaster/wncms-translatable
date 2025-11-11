@@ -153,8 +153,18 @@ trait HasTranslations
      */
     public function setTranslation(string $field, string $locale, $value)
     {
-        if (empty($value)) {
-            return false;
+        if ($value === null || (is_string($value) && $value === '')) {
+            if (! config('translatable.save_empty_translations', false)) {
+                return $this->translations()
+                    ->where('field', $field)
+                    ->where('locale', $locale)
+                    ->delete();
+            }
+
+            return $this->translations()->updateOrCreate(
+                ['field' => $field, 'locale' => $locale],
+                ['value' => $value ?? '']
+            );
         }
 
         // Handle specific cast types
@@ -221,9 +231,12 @@ trait HasTranslations
         foreach ($this->translatable as $field) {
             $value = parent::getAttribute($field);
 
-            if (!is_null($value)) {
-                $this->setTranslation($field, app()->getLocale(), $value);
-            }
+            // if (!is_null($value)) {
+            //     $this->setTranslation($field, app()->getLocale(), $value);
+            // }
+            
+            // Always call setTranslation, even for null
+            $this->setTranslation($field, app()->getLocale(), $value);
         }
     }
 

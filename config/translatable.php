@@ -2,6 +2,7 @@
 
 return [
     'debug' => false,
-    'create_tranlation_for_default_locale' => true,
+    'create_translation_for_default_locale' => true,
     'default_locale_key' => 'app.fallback_locale',
+    'save_empty_translations' => false, 
 ];

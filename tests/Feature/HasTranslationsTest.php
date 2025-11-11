@@ -12,8 +12,8 @@ class HasTranslationsTest extends TestCase
     public function it_loads_translatable_config()
     {
         // Access the configuration value
-        $create_tranlation_for_default_locale = config('translatable.create_tranlation_for_default_locale');
-        $this->assertTrue($create_tranlation_for_default_locale);
+        $create_translation_for_default_locale = config('translatable.create_translation_for_default_locale');
+        $this->assertTrue($create_translation_for_default_locale);
     }
 
     #[Test]
