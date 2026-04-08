@@ -31,8 +31,7 @@ class TestCase extends OrchestraTestCase
             $table->timestamps();
         });
 
-        // Load translation migtaions
-        $this->loadMigrationsFrom(__DIR__ . '/../migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     /**

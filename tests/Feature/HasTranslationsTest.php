@@ -2,9 +2,11 @@
 
 namespace Wncms\Translatable\Tests\Feature;
 
+use Illuminate\Support\Facades\App;
 use PHPUnit\Framework\Attributes\Test;
-use Wncms\Translatable\Tests\TestCase;
+use Wncms\Translatable\Models\Translation;
 use Wncms\Translatable\Tests\Models\TestPost;
+use Wncms\Translatable\Tests\TestCase;
 
 class HasTranslationsTest extends TestCase
 {
@@ -93,5 +95,63 @@ class HasTranslationsTest extends TestCase
         $retrievedPost = TestPost::first();
         $this->assertEquals('Título en Español', $retrievedPost->getTranslation('title', 'es'));
         $this->assertEquals('Title in English', $retrievedPost->getTranslation('title', 'en'));
+    }
+
+    #[Test]
+    public function it_does_not_block_model_persistence_when_default_locale_translations_are_disabled()
+    {
+        config()->set('app.locale', 'en');
+        config()->set('app.fallback_locale', 'en');
+        config()->set('translatable.create_translation_for_default_locale', false);
+
+        $post = TestPost::create([
+            'title' => 'Primary Title',
+            'content' => 'Primary Content',
+        ]);
+
+        $this->assertNotNull($post->getKey());
+        $this->assertDatabaseCount('translations', 0);
+
+        $post->update(['title' => 'Updated Title']);
+
+        $this->assertSame('Updated Title', $post->fresh()->title);
+        $this->assertDatabaseCount('translations', 0);
+    }
+
+    #[Test]
+    public function it_deletes_related_translations_when_the_model_is_deleted()
+    {
+        $post = TestPost::create([
+            'title' => 'Original Title',
+            'content' => 'Original Content',
+        ]);
+
+        $post->setTranslation('title', 'es', 'Título en Español');
+
+        $translationId = Translation::query()->value('id');
+
+        $this->assertNotNull($translationId);
+
+        $post->delete();
+
+        $this->assertDatabaseMissing('translations', ['id' => $translationId]);
+    }
+
+    #[Test]
+    public function it_uses_the_current_locale_when_accessing_translated_attributes_and_arrays()
+    {
+        $post = TestPost::create([
+            'title' => 'English Title',
+            'content' => 'English Content',
+        ]);
+
+        $post->setTranslation('title', 'zh_TW', '中文標題');
+
+        App::setLocale('zh_TW');
+
+        $freshPost = TestPost::query()->first();
+
+        $this->assertSame('中文標題', $freshPost->title);
+        $this->assertSame('中文標題', $freshPost->toArray()['title']);
     }
 }

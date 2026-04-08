@@ -30,29 +30,8 @@ trait HasTranslations
             $builder->with('translations');
         });
 
-        static::saving(function (Model $model) {
-            // Handle translations before saving the model
-            // if current locale is the default locale and the config is set to not create translation for default locale
-            if (config(config('translatable.default_locale_key', 'app.locale')) == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
-                return false;
-            }
-        });
-
         static::saved(function (Model $model) {
             // Handle translations after saving the model
-            $model->handleTranslationsAfterSave();
-        });
-
-        static::updating(function (Model $model) {
-            // Handle translations before updating the model
-            // if current locale is the default locale and the config is set to not create translation for default locale
-            if (config(config('translatable.default_locale_key', 'app.locale')) == config('app.locale') && !config('translatable.create_translation_for_default_locale')) {
-                return false;
-            }
-        });
-
-        static::updated(function (Model $model) {
-            // Handle translations after updating the model
             $model->handleTranslationsAfterSave();
         });
 
@@ -81,7 +60,7 @@ trait HasTranslations
     public function getAttribute($key)
     {
         // Check if the key is translatable
-        if (in_array($key, $this->translatable)) {
+        if (in_array($key, $this->getTranslatable(), true)) {
             return $this->getTranslation($key);
         }
 
@@ -216,7 +195,7 @@ trait HasTranslations
      */
     public function getTranslatable()
     {
-        return $this->translatable;
+        return $this->translatable ?? [];
     }
 
     /**
@@ -228,16 +207,25 @@ trait HasTranslations
      */
     protected function handleTranslationsAfterSave()
     {
+        if (! $this->shouldPersistTranslationsForCurrentLocale()) {
+            return;
+        }
+
         foreach ($this->translatable as $field) {
             $value = parent::getAttribute($field);
-
-            // if (!is_null($value)) {
-            //     $this->setTranslation($field, app()->getLocale(), $value);
-            // }
-            
-            // Always call setTranslation, even for null
             $this->setTranslation($field, app()->getLocale(), $value);
         }
+    }
+
+    protected function shouldPersistTranslationsForCurrentLocale(): bool
+    {
+        $defaultLocale = config(config('translatable.default_locale_key', 'app.locale'));
+
+        if ($defaultLocale === config('app.locale')) {
+            return (bool) config('translatable.create_translation_for_default_locale', true);
+        }
+
+        return true;
     }
 
     public function toArray()

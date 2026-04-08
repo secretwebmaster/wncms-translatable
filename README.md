@@ -18,7 +18,7 @@ composer require secretwebmaster/wncms-translatable
 
 ### Step 2. Publish the migration file:
 ```bash
-php artisan vendor:publish --tag=translatable-migrations
+php artisan vendor:publish --provider="Wncms\Translatable\TranslatableServiceProvider" --tag="translatable-migrations"
 ```
 
 ### Step 3. Run the migration to create the `translations` table:
@@ -102,6 +102,12 @@ The package will create a `translations` table with the following structure:
 | `updated_at`      | timestamp    | Timestamp for when the translation was updated|
 
 ## Update log
+### v1.4.0 2026-04-08
+- Laravel 13 baseline (`illuminate/database` / `illuminate/support` ^13.0)
+- PHP 8.4 baseline
+- Testbench 11 / PHPUnit 12 compatibility
+- fix default-locale skip logic so model save/update is not blocked
+
 ### v1.2.8 2025-08-20
 - fix typo in Feature test
 - add save_empty_translations option in config file
